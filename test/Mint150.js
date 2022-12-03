@@ -36,6 +36,7 @@ const logGasUsage = (currentGasUsage) => {
 describe("Mint150", async function () {
     let attacker;
     let victimToken;
+    let numberOfMints;
 
     beforeEach(async () => {
         await ethers.provider.send("hardhat_reset");
@@ -46,7 +47,7 @@ describe("Mint150", async function () {
         await victimToken.deployed();
 
         // random offset to discourage test fitting
-        const numberOfMints = Math.floor(Math.random() * 5) + 1;
+        numberOfMints = Math.floor(Math.random() * 5) + 1;
 
         for (let i = 0; i < numberOfMints; i++) {
             let tx = await victimToken.mint();
@@ -62,7 +63,7 @@ describe("Mint150", async function () {
 
             const txn = await attackerContract
                 .connect(attacker)
-                .deploy(victimToken.address);
+                .deploy(victimToken.address, numberOfMints + 1);
 
             const receipt = await txn.deployTransaction.wait();
             const gasUsed = receipt.cumulativeGasUsed;
@@ -83,7 +84,7 @@ describe("Mint150", async function () {
 
             const txn = await attackerContract
                 .connect(attacker)
-                .deploy(victimToken.address);
+                .deploy(victimToken.address, numberOfMints + 1);
         });
     });
 
